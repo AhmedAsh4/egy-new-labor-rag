@@ -315,24 +315,21 @@ st.markdown(
 )
 
 # Action buttons row
-col1, col2, col3 = st.columns([2, 2, 2])
-with col1:
-    if st.button("🗑️ مسح المحادثة | Clear Chat"):
-        st.session_state.messages = [st.session_state.messages[0]]
-        st.session_state.search_history = []
-        st.session_state.show_examples = True
-        save_to_storage()
-        st.rerun()
-
+col1, col2, col3 = st.columns([0.5, 3, 0.5])
 with col2:
-    if st.button("💡 أمثلة | Examples"):
-        st.session_state.show_examples = not st.session_state.show_examples
-        st.rerun()
+    btn_col1, btn_col2 = st.columns(2)
+    with btn_col1:
+        if st.button("🗑️ مسح المحادثة | Clear Chat", use_container_width=True):
+            st.session_state.messages = [st.session_state.messages[0]]
+            st.session_state.search_history = []
+            st.session_state.show_examples = True
+            save_to_storage()
+            st.rerun()
 
-with col3:
-    if st.button("📜 السجل | History"):
-        st.session_state.show_history = not st.session_state.get("show_history", False)
-        st.rerun()
+    with btn_col2:
+        if st.button("💡 أمثلة | Examples", use_container_width=True):
+            st.session_state.show_examples = not st.session_state.show_examples
+            st.rerun()
 
 st.markdown("---")
 
@@ -354,23 +351,6 @@ if st.session_state.show_examples and len(st.session_state.messages) == 1:
                 st.session_state.example_clicked = question
                 st.rerun()
 
-    st.markdown("---")
-
-# Show search history if enabled
-if st.session_state.get("show_history", False) and st.session_state.search_history:
-    st.markdown("#### 📜 سجل البحث | Search History:")
-    for idx, item in enumerate(reversed(st.session_state.search_history[-5:])):
-        if st.button(
-            (
-                f"🔍 {item['query'][:50]}..."
-                if len(item["query"]) > 50
-                else f"🔍 {item['query']}"
-            ),
-            key=f"hist_{idx}",
-            use_container_width=True,
-        ):
-            st.session_state.history_clicked = item["query"]
-            st.rerun()
     st.markdown("---")
 
 
@@ -420,9 +400,6 @@ for msg in st.session_state.messages:
 if "example_clicked" in st.session_state:
     prompt = st.session_state.example_clicked
     del st.session_state.example_clicked
-elif "history_clicked" in st.session_state:
-    prompt = st.session_state.history_clicked
-    del st.session_state.history_clicked
 elif "related_clicked" in st.session_state:
     prompt = st.session_state.related_clicked
     del st.session_state.related_clicked
