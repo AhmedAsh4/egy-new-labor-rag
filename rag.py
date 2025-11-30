@@ -76,17 +76,72 @@ class LaborRAG:
         response = self.make_request(rerank_data, url)
         print(f"Rerank API response status: {response.status_code}")
         if response.status_code == 200:
-            return response.json()
+            result = response.json()
+            return result['results']
         else:
             raise Exception(
                 f"Rerank API failed: {response.status_code} - {response.text}"
             )
 
+    def build_prompt(self, user_query, reranked_results, reference_chunk):
+        context_str = ""
+        for i, result in enumerate(reranked_results):
+            context_str += f"[Doc {i+1}]:\n{result['document']['text']}\n\n"
+        prompt = f"""
+            ### ROLE
+            You are an expert legal assistant specializing in Egyptian Labor Law. 
+            Your task is to answer the user's query strictly using the provided context.
+
+            ### REFERENCE DEFINITIONS (Global Context)
+            The following text contains the official definitions of legal terms used in this law. 
+            Consult this section to understand the precise meaning of words like "Worker", "Employer", "Wage", etc.
+            --------------------------------------------------
+            {reference_chunk}
+            --------------------------------------------------
+
+            ### RELEVANT ARTICLES (Specific Context)
+            The following text contains the specific legal articles retrieved for this query.
+            --------------------------------------------------
+            {context_str}
+            --------------------------------------------------
+
+            ### USER QUERY
+            {user_query}
+
+            ### INSTRUCTIONS
+            1. **Analyze**: First, look up any key terms in the "Reference Definitions" to ensure you interpret them correctly.
+            2. **Synthesize**: Answer the query using *only* the information found in the "Relevant Articles" section.
+            3. **Cite**: At the end of every claim, put the document number in brackets, e.g., [Doc 1].
+            4. **Language**: Answer in the same language as the query (Arabic).
+            5. **Tone**: Professional, precise, and legal.
+            6. **Unknowns**: If the answer is not in the provided text, state: "The provided documents do not contain this information." Do not hallucinate.
+
+            ### ANSWER
+            """
+        return prompt
+
+    def call_llm(self, prompt):
+        llm_data = {
+            "model": "deepseek-ai/DeepSeek-V3-0324-Free",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.002,
+        }
+        url = "https://inference.meganova.ai/v1/chat/completions"
+        response = self.make_request(llm_data, url)
+        if response.status_code == 200:
+            print("LLM API call successful.")
+            completion = response.json()["choices"][0]["message"]["content"]
+            return completion
+        else:
+            raise Exception(f"LLM API failed: {response.status_code} - {response.text}")
+
     def run_query(self, query):
         query_embedding = self.embed_query(query)
         results = self.search_index(query_embedding)
         reranked_results = self.rerank_results(query, results)
-        return reranked_results
+        prompt = self.build_prompt(query, reranked_results, self.chunks[13]["content"])
+        answer = self.call_llm(prompt)
+        return answer
 
 
 if __name__ == "__main__":
