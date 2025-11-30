@@ -1,10 +1,8 @@
 import json
+import os
 import re
 
-from arabic_reshaper import reshape
-from bidi.algorithm import get_display
-
-with open(r"data\files\labor law.txt", "r", encoding="utf-8") as f:
+with open(os.path.join("data", "files", "labor law.txt"), "r", encoding="utf-8") as f:
     text = f.read()
 
 pattern1 = r"\(\s*ﺍﳌﺎﺩﺓ\s+([^)]+)\)"  # ( مادة ordinal )
@@ -27,5 +25,5 @@ for i, (start, title) in enumerate(matches):
 
     chunks.append({"id": str(i + 1), "content": content})
 
-with open(r"data\files\chunks.json", "w", encoding="utf-8") as f:
+with open(os.path.join("data", "files", "chunks.json"), "w", encoding="utf-8") as f:
     json.dump(chunks, f, ensure_ascii=False, indent=4)

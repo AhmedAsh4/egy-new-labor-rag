@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+EMBEDDING_DIM = 4096
+
 with open("data/files/chunks.json", "r", encoding="utf-8") as f:
     chunks = json.load(f)
 
@@ -29,11 +31,13 @@ if response.status_code == 200:
     for item in embeddings:
         vectors.append(item["embedding"])
     print("Embeddings generated successfully.")
+else:
+    raise Exception(f"Embedding API failed: {response.status_code} - {response.text}")
 
 vectors_np = np.array(vectors).astype("float32")
 faiss.normalize_L2(vectors_np)  # Normalize for Cosine Similarity
 
-index = faiss.IndexFlatIP(4096)
+index = faiss.IndexFlatIP(EMBEDDING_DIM)
 index.add(vectors_np)
 
-faiss.write_index(index, r"data\files\index.faiss")
+faiss.write_index(index, os.path.join("data", "files", "index.faiss"))
