@@ -11,8 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -38,7 +37,9 @@ class LaborRAG:
                 f"Loaded {self.index.ntotal} vectors and {len(self.chunks)} text chunks."
             )
         except FileNotFoundError:
-            logger.error("Error: index.faiss or chunks.json not found. Run ingest first.")
+            logger.error(
+                "Error: index.faiss or chunks.json not found. Run ingest first."
+            )
             sys.exit(1)
 
     def make_request(self, data_dict, url):
@@ -138,7 +139,8 @@ class LaborRAG:
             4. **Cite**: At the end of every claim or statement, cite the article ID in brackets, e.g., [Article 12] or [Article 48].
             5. **Language**: Answer in the same language as the query (Arabic).
             6. **Tone**: Professional, precise, and legal.
-            7. **Unknowns**: If the answer is not in the provided text, state: "The provided documents do not contain this information." Do not hallucinate.
+            7. **Unknowns**: If the answer is not in the provided text, state: "The provided documents do not contain this information." in arabic. Do not hallucinate. If the query is unrelated to Egyptian Labor Law, politely decline to answer.
+            8. **Out of Scope**: Do not provide legal advice or opinions beyond the scope of the Egyptian Labor Law. If asked for interpretations, refer only to the text.
 
             ### ANSWER
             """
