@@ -2,6 +2,12 @@
 
 A Retrieval-Augmented Generation (RAG) system for answering questions about the New Egyptian Labor Law No. 14 of 2025.
 
+## 🌐 Try It Online
+
+**Live Demo**: [http://136.119.180.89:8501/](http://136.119.180.89:8501/)
+
+No installation required - try it directly in your browser!
+
 ## 🌟 Features
 
 - **Semantic Search**: Uses FAISS vector database with Qwen3-Embedding-8B for efficient document retrieval
@@ -161,18 +167,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This system provides legal information only, not legal advice. Consult a qualified lawyer for specific legal counsel regarding Egyptian Labor Law matters.
 
-## 📝 License
-
-MIT License - see LICENSE file for details
-
 ## 👨‍💻 Author
 
 **Ahmed Ashraf**
 - LinkedIn: [ahmedashraaff](https://www.linkedin.com/in/ahmedashraaff/)
-- GitHub: [AhmedAsh4](https://github.com/AhmedAsh4)
 
-## 🙏 Acknowledgments
-
-- Egyptian Government for publishing Labor Law No. 14 of 2025
-- MegaNova for providing inference API access
-- Open source community for the amazing tools
