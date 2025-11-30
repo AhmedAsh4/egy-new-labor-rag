@@ -36,7 +36,7 @@ async def ask_question(request: dict):
         request: Dictionary containing the user's query
 
     Returns:
-        Text response with the answer including citations
+        Text response with the answer including citations and related questions
     """
     try:
         query = request.get("query")
@@ -51,9 +51,12 @@ async def ask_question(request: dict):
         if not answer:
             raise HTTPException(status_code=404, detail="No answer generated")
 
+        # Generate related questions
+        related_questions = rag_system.generate_related_questions(query, answer)
+
         logger.info("Successfully processed query")
 
-        return {"answer": answer}
+        return {"answer": answer, "related_questions": related_questions}
 
     except Exception as e:
         logger.error(f"Error processing query: {str(e)}")

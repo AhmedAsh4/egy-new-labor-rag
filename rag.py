@@ -255,8 +255,8 @@ class LaborRAG:
             1. **Analyze**: First, look up any key terms in the "Reference Definitions" to ensure you interpret them correctly.
             2. **Synthesize**: Answer the query using *only* the information found in the "Relevant Articles" section.
             3. **Format**: Structure your response with clear sections and bullet points where appropriate for better readability.
-            4. **Cite**: At the end of every claim or statement, cite the article ID in brackets, e.g., [Article 12] or [Article 48].
-            5. **Language**: Answer in the same language as the query.
+            4. **Cite**: At the end of every claim or statement, cite the article ID in brackets, e.g., [Article 12] or [Article 48] for english query.
+            5. **Language**: Always answer in the same language as the query. for both the body and the citations, for example, if the query is in Arabic, respond in Arabic.
             6. **Tone**: Professional, precise, and legal.
             7. **Unknowns**: If the answer is not in the provided text, state: "The provided documents do not contain this information." in the same language as the query. Do not hallucinate. If the query is unrelated to Egyptian Labor Law, politely decline to answer.
             8. **Out of Scope**: Do not provide legal advice or opinions beyond the scope of the Egyptian Labor Law. If asked for interpretations, refer only to the text.
@@ -289,6 +289,73 @@ class LaborRAG:
             return completion
         else:
             raise Exception(f"LLM API failed: {response.status_code} - {response.text}")
+
+    def generate_related_questions(self, original_query, answer):
+        """Generate related follow-up questions based on the query and answer.
+
+        Args:
+            original_query: The original user query.
+            answer: The generated answer to the query.
+
+        Returns:
+            List of 3 related questions in the same language as the original query.
+        """
+        # Detect language of the query
+        arabic_chars = sum(1 for c in original_query if "\u0600" <= c <= "\u06ff")
+        total_chars = sum(1 for c in original_query if c.isalpha())
+        is_arabic = total_chars > 0 and arabic_chars / total_chars > 0.5
+
+        language = "Arabic" if is_arabic else "English"
+
+        prompt = f"""Based on this Egyptian Labor Law query and answer, generate exactly 3 related follow-up questions that a user might want to ask next.
+
+Original Query: {original_query}
+Answer Summary: {answer[:400]}...
+
+Generate questions in {language} that:
+1. Explore related aspects of the same topic (e.g., exceptions, special cases)
+2. Ask about related rights or obligations mentioned but not fully covered
+3. Inquire about practical applications or procedures
+
+Requirements:
+- Generate EXACTLY 3 questions
+- Each question on a new line
+- Do NOT number the questions
+- Keep questions concise (under 15 words)
+- Make them specific to Egyptian Labor Law
+- Use {language} language only
+
+Questions:"""
+
+        llm_data = {
+            "model": self.LLM_MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.7,
+            "max_tokens": 200,
+        }
+
+        try:
+            response = self.make_request(llm_data, self.LLM_URL)
+            if response.status_code == 200:
+                questions_text = response.json()["choices"][0]["message"]["content"]
+                # Parse questions - split by newlines and clean
+                questions = [
+                    q.strip().lstrip("0123456789.-) ")
+                    for q in questions_text.strip().split("\n")
+                    if q.strip()
+                ]
+                # Return only first 3, filter out empty ones
+                questions = [q for q in questions if len(q) > 10][:3]
+                logger.info(f"Generated {len(questions)} related questions")
+                return questions
+            else:
+                logger.warning(
+                    f"Related questions generation failed: {response.status_code}"
+                )
+                return []
+        except Exception as e:
+            logger.error(f"Error generating related questions: {e}")
+            return []
 
     def run_query(self, query):
         """Execute the complete RAG pipeline for a user query.
