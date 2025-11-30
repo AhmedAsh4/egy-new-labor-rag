@@ -1,3 +1,4 @@
+import os
 import random
 import time
 from datetime import datetime
@@ -5,7 +6,7 @@ from datetime import datetime
 import requests
 import streamlit as st
 
-API_URL = "http://localhost:8000/ask"
+API_URL = os.getenv("API_URL", "http://localhost:8000/ask")
 
 
 st.set_page_config(
