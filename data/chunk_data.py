@@ -10,8 +10,8 @@ pattern2 = r"ﻣﺎﺩﺓ\s*\(\s*([^)]+)\)\s*:"  # مادة (digit):
 
 matches = []
 
-for match in re.finditer(pattern1, text):
-    matches.append((match.start(), match.group(0)))
+# for match in re.finditer(pattern1, text):
+#     matches.append((match.start(), match.group(0)))
 
 for match in re.finditer(pattern2, text):
     matches.append((match.start(), match.group(0)))
