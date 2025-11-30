@@ -1,5 +1,6 @@
-import re
 import json
+import re
+
 from arabic_reshaper import reshape
 from bidi.algorithm import get_display
 

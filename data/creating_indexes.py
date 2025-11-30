@@ -1,8 +1,9 @@
-import numpy as np
-import faiss
-import requests
-import os
 import json
+import os
+
+import faiss
+import numpy as np
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
