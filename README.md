@@ -4,7 +4,7 @@ A Retrieval-Augmented Generation (RAG) system for answering questions about the 
 
 ## 🌐 Try It Online
 
-**Live Demo**: [http://136.119.180.89:8501/](http://136.119.180.89:8501/)
+**Live Demo**: [http://labor-egypt-rag.duckdns.org:8501/](http://labor-egypt-rag.duckdns.org:8501/)
 
 No installation required - try it directly in your browser!
 
