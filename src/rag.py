@@ -25,9 +25,9 @@ class LaborRAG:
     """
 
     # API endpoints
-    EMBEDDING_URL = "https://inference.meganova.ai/v1/embeddings"
-    RERANK_URL = "https://inference.meganova.ai/v1/rerank"
-    LLM_URL = "https://inference.meganova.ai/v1/chat/completions"
+    EMBEDDING_URL = os.environ.get("EMBEDDING_URL")
+    RERANK_URL = os.environ.get("RERANK_URL")
+    LLM_URL = os.environ.get("LLM_URL")
 
     # Model names
     EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-8B"

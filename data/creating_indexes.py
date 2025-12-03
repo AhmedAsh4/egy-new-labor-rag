@@ -16,7 +16,7 @@ with open("data/files/chunks.json", "r", encoding="utf-8") as f:
 vectors = []
 chunks_content = [c["content"] for c in chunks]
 
-embedding_url = "https://inference.meganova.ai/v1/embeddings"
+embedding_url = os.environ.get("EMBEDDING_URL")
 
 embedding_headers = {
     "Content-Type": "application/json",
