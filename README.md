@@ -10,9 +10,9 @@ No installation required - try it directly in your browser!
 
 ## 🌟 Features
 
-- **Semantic Search**: Uses FAISS vector database with Qwen3-Embedding-8B for efficient document retrieval
-- **Advanced Reranking**: Implements BGE-Reranker-v2-m3 for improved result relevance
-- **Smart Answer Generation**: Powered by DeepSeek-V3 for accurate, citation-backed responses
+- **Semantic Search**: Uses FAISS vector database with compatible embedding models for efficient document retrieval
+- **Advanced Reranking**: Implements compatible reranking models for improved result relevance
+- **Smart Answer Generation**: Powered by compatible language models for accurate, citation-backed responses
 - **Bilingual Support**: Handles both Arabic and English queries seamlessly
 - **Related Questions**: Automatically generates contextual follow-up questions
 - **Modern UI**: Beautiful Streamlit interface with RTL support for Arabic
@@ -38,7 +38,6 @@ egy-new-labor-rag/
 │   ├── Dockerfile
 │   └── docker-compose.yml
 ├── requirements.txt
-├── .env                    # API keys (not in git)
 ├── .gitignore
 └── README.md
 ```
@@ -48,7 +47,6 @@ egy-new-labor-rag/
 ### Prerequisites
 
 - Python 3.8+
-- MEGANOVA API key (for embeddings, reranking, and LLM)
 
 ### Installation
 
@@ -72,13 +70,7 @@ egy-new-labor-rag/
    pip install -r requirements.txt
    ```
 
-4. **Set up environment variables**
-   Create a `.env` file in the root directory:
-   ```env
-   MEGANOVA_API_KEY=your_api_key_here
-   ```
-
-5. **Prepare data (if needed)**
+4. **Prepare data (if needed)**
    ```bash
    # Extract text from PDF
    python data/extract_text_from_pdf.py
@@ -142,22 +134,21 @@ GET http://localhost:8000/health
 
 ## 🛠️ Tech Stack
 
-- **Embedding Model**: Qwen/Qwen3-Embedding-8B (4096 dimensions)
-- **Reranking Model**: BAAI/bge-reranker-v2-m3
-- **LLM**: DeepSeek-V3-0324-Free
+- **Embedding Model**: Compatible embedding model (e.g., Qwen3-Embedding-8B, 4096 dimensions)
+- **Reranking Model**: Compatible reranking model (e.g., BGE-Reranker-v2-m3)
+- **LLM**: Compatible language model (e.g., DeepSeek-V3)
 - **Vector DB**: FAISS (Facebook AI Similarity Search)
 - **Backend**: FastAPI
 - **Frontend**: Streamlit
-- **API Provider**: MegaNova Inference API
 
 ## 📊 RAG Pipeline
 
-1. **Query Embedding**: User query → Qwen3-Embedding-8B → 4096-dim vector
+1. **Query Embedding**: User query → Compatible embedding model → 4096-dim vector
 2. **Vector Search**: FAISS retrieves top 50 similar chunks
-3. **Reranking**: BGE-Reranker refines to top 5 most relevant
+3. **Reranking**: Compatible reranking model refines to top 5 most relevant
 4. **Context Building**: Combines retrieved articles with legal definitions
-5. **Answer Generation**: DeepSeek-V3 generates response with citations
-6. **Related Questions**: LLM generates 3 contextual follow-ups
+5. **Answer Generation**: Compatible language model generates response with citations
+6. **Related Questions**: Language model generates 3 contextual follow-ups
 
 ## 🤝 Contributing
 
